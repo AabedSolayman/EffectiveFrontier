@@ -110,9 +110,13 @@ if __name__ == "__main__":
         portfolio_volatilities.append(temp)
         
     sharpe_ratio = np.array(portfolio_return) / np.array(portfolio_volatilities)
+    max_sharp_value = sharpe_ratio.argmax()
+    max_sharpe_ratio = weight_array[max_sharp_value]
 
-    print("MAXIMUM SHARPE RATIO AT:" + str(weight_array[sharpe_ratio.argmax()]))
+    print("MAXIMUM SHARPE RATIO AT:" + str(max_sharpe_ratio*100))
         
     plt.plot(portfolio_volatilities,portfolio_return,'ro')
+    plt.plot(portfolio_volatilities[max_sharp_value],portfolio_return[max_sharp_value],'bo')
+
     plt.show()
 
