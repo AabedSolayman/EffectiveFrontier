@@ -105,18 +105,28 @@ if __name__ == "__main__":
         
 
         temp = calc_porftolio_return(mean,weights)
-        portfolio_return.append(temp)
+        portfolio_return.append(temp*100)
         temp = calc_porftolio_volatility(std_deviation, weights *100, correlation)
         portfolio_volatilities.append(temp)
         
     sharpe_ratio = np.array(portfolio_return) / np.array(portfolio_volatilities)
     max_sharp_value = sharpe_ratio.argmax()
     max_sharpe_ratio = weight_array[max_sharp_value]
-
+    max_sharp_volatility = portfolio_volatilities[max_sharp_value]
+    max_sharp_return     = portfolio_return[max_sharp_value]
+    
     print("MAXIMUM SHARPE RATIO AT:" + str(max_sharpe_ratio*100))
-        
-    plt.plot(portfolio_volatilities,portfolio_return,'ro')
-    plt.plot(portfolio_volatilities[max_sharp_value],portfolio_return[max_sharp_value],'bo')
+  
+    # plt.plot(portfolio_volatilities,portfolio_return,'ro')
+    # plt.plot(portfolio_volatilities[max_sharp_value],portfolio_return[max_sharp_value],'bo')
+
+    #plot volatiliy, return, and sharp ratio
+    plt.figure(figsize=(17,9))
+    plt.scatter(portfolio_volatilities,portfolio_return,c=sharpe_ratio,cmap='plasma')
+    plt.colorbar(label='Sharpe Ratio')
+    plt.xlabel('Volatility')
+    plt.ylabel('Return')# Add red dot for max sharp ratio
+    plt.scatter(max_sharp_volatility,max_sharp_return,c='red',s=50,edgecolors='black')
 
     plt.show()
 
