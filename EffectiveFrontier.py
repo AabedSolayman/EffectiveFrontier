@@ -1,9 +1,8 @@
-import numpy as np
-import matplotlib as plt
-import math
 import sys  
+import math
 
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 
@@ -17,11 +16,11 @@ def read_data(file_name_list):
     return closed_price
 
 """
-calc_expected_retrun: calculates expected return.
+calc_history_retrun: calculates expected return.
 coins_prices: np array of the prices of a stock or 
 a cryptocoin usually at closed price.
 """
-def calc_expected_retrun(coins_prices):
+def calc_history_retrun(coins_prices):
     #coins_prices_incremented is an np array that contains 
     # the coin prices but starts from index 1 instead of 0.
     coins_prices_incremented = np.empty_like(coins_prices)
@@ -65,6 +64,8 @@ def calc_porftolio_return(mean, ratio):
     portfolio_return = np.sum(mean * ratio) / 100
     return portfolio_return
     
+    
+    
 """
 calc_porftolio_volatility: calculates the portfolio volatility using standart deviation.
 portfolio_volatility:
@@ -75,6 +76,8 @@ def calc_porftolio_volatility(std_dev, ratio, correl):
     return portfolio_volatility
     
 
+
+
 if __name__ == "__main__":
     coins_prices_matrix = np.array([0,0], dtype=object)        
     
@@ -84,10 +87,32 @@ if __name__ == "__main__":
     for i in range(nr_of_coins):
         coins_prices_matrix[i] = read_data(sys.argv[i+1])
 
-    return_percentages  = calc_expected_retrun(coins_prices_matrix)
+    return_percentages  = calc_history_retrun(coins_prices_matrix)
     mean, variance, std_deviation, correlation = calc_mean_variance_stddev(
                                                             return_percentages)
     
-    for i in range(0,100,10):
-        calc_porftolio_return(mean,np.array([i,100-i]))
-        calc_porftolio_volatility(std_deviation, np.array([i,100-i]), correlation)  
+    portfolio_return       = []
+    portfolio_volatilities = []
+    weight_array           = []
+    
+
+# For several stocks/coins
+    for i in range(0,10000):
+        weights = np.random.rand(nr_of_coins)
+        random_sum   = np.sum(weights)
+        weights = weights / random_sum
+        weight_array.append(weights)
+        
+
+        temp = calc_porftolio_return(mean,weights)
+        portfolio_return.append(temp)
+        temp = calc_porftolio_volatility(std_deviation, weights *100, correlation)
+        portfolio_volatilities.append(temp)
+        
+    sharpe_ratio = np.array(portfolio_return) / np.array(portfolio_volatilities)
+
+    print("MAXIMUM SHARPE RATIO AT:" + str(weight_array[sharpe_ratio.argmax()]))
+        
+    plt.plot(portfolio_volatilities,portfolio_return,'ro')
+    plt.show()
+
