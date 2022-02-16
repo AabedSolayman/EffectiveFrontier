@@ -150,11 +150,13 @@ if __name__ == "__main__":
     max_sharp_volatility = portfolio_volatilities[max_sharp_value]
     max_sharp_return     = portfolio_return[max_sharp_value]
     
-    print("MAXIMUM SHARPE RATIO AT:" + str(max_sharpe_ratio*100))
-  
+    
+    for i in range(len(max_sharpe_ratio)):
+        print(sys.argv[i+1]+ ":" + "%.2f" % round(max_sharpe_ratio[i]*100, 2) + "%")
+  #"%.2f" % round(max_sharpe_ratio[i]*100, 2)
     
     #plot volatiliy, return, and sharp ratio
-    plt.figure(figsize=(9,19))
+    plt.figure(figsize=(9,12))
     plt.scatter(portfolio_volatilities,portfolio_return,c=sharpe_ratio,cmap='plasma')
     plt.colorbar(label='Sharpe Ratio')
     plt.xlabel('Volatility')
