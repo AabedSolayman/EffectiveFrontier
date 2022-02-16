@@ -101,11 +101,15 @@ def fetch_data(coin_pair, frequency, days ):
     return np.array(price_list)
 
 
+
 if __name__ == "__main__":
-    coins_prices_matrix = np.array([0,0], dtype=object)        
     
     global nr_of_coins      #number of different coins or stocks in a portfolio
     nr_of_coins = len(sys.argv)-1
+    
+    
+    coins_prices_matrix = np.array([0] * nr_of_coins, dtype=object)        
+
 
     frequency = "86400" #1Day
     days = 2095 #period
@@ -129,9 +133,9 @@ if __name__ == "__main__":
 
 # For several stocks/coins
     for i in range(0,max_iterations):
-        weights = np.random.rand(nr_of_coins)
+        weights      = np.random.rand(nr_of_coins)
         random_sum   = np.sum(weights)
-        weights = weights / random_sum
+        weights      = weights / random_sum
         weight_array.append(weights)
         
 
