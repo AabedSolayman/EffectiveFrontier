@@ -27,6 +27,16 @@ i.e.
 python3 EffectiveFrontier USDT_BTC USDT_ETH USDT_MATIC
 ```
 
+## Result
+
+
+```bash
+USDT_BTC:24.78%
+USDT_ETH:23.02%
+USDT_MATIC:37.61%
+USDT_LINK:14.59%
+```
+![alt text](https://github.com/AabedSolayman/EffectiveFrontier/blob/images/Figure_1.png?raw=true)
 
 
 ## Contributing
