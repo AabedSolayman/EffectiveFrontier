@@ -1,16 +1,12 @@
-import sys  
+import sys
 import math
 
 import yfinance as yf  
 import requests
 
-from time import time
-from datetime import datetime
 
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
 
 """
 read_data: reads data from files and returns the data.
@@ -19,6 +15,7 @@ file_name: list of file names. must be greater than 2
 def read_data(file_name_list):
     closed_price = np.genfromtxt(file_name_list, delimiter=',')[1:,4]
     return closed_price
+
 
 """
 calc_history_retrun: calculates expected return.
@@ -35,7 +32,6 @@ def calc_history_retrun(coins_prices):
         coins_prices_incremented[i]     = coins_prices[i][1:]
         return_percentage[i]            = coins_prices_incremented[i]/coins_prices[i][:-1]-1 
       
-    return_percentage = return_percentage * 100
     return return_percentage
 
 
@@ -55,8 +51,9 @@ def calc_mean_variance_stddev(return_percentage):
         variance[i]         =   np.var ( return_percentages[i] )
         std_deviation[i]    =   np.std ( return_percentages[i] )
     
-    correlation = np.corrcoef(return_percentages[0],
+    correlation = np.cov(return_percentages[0],
                                return_percentages[1])
+
 
     return mean, variance, std_deviation, correlation
 
@@ -67,8 +64,9 @@ calc_porftolio_return: calculates the portfolio expected return.
 portfolio_return:
 """
 def calc_porftolio_return(mean, ratio):
-    portfolio_return = np.sum(mean * ratio) 
-    return portfolio_return
+    portfolio_return = np.sum(mean * ratio)
+    portfolio_return = (1+portfolio_return)**250 - 1
+    return (portfolio_return)
     
     
     
@@ -77,16 +75,13 @@ calc_porftolio_volatility: calculates the portfolio volatility using standart de
 portfolio_volatility:
 """
 def calc_porftolio_volatility(std_dev, ratio, correl):
-
+        
     portfolio_volatility = math.sqrt(np.sum((std_dev*ratio)**2) + 2 * np.prod( std_dev * ratio ) * correl[0][1])
-    
-    # portfolio_volatility = math.sqrt((std_dev[0]*ratio[0])**2 +
-    #                                  (std_dev[1]*ratio[1])**2 +
-    #                                  2 * std_dev[0]*ratio[0] * std_dev[1]*ratio[1] * correl[0][1])
-    
-    # portfolio_volatility = np.sqrt(np.dot(weights.T, np.dot(correl, weights)))
+    # portfolio_volatility = np.sqrt(12) * portfolio_volatility
+    portfolio_volatility = np.sqrt(250) * portfolio_volatility
+
     return portfolio_volatility
-    
+
 
 def fetch_data_crypto(coin_pair, frequency, days ):
     
@@ -99,16 +94,24 @@ def fetch_data_crypto(coin_pair, frequency, days ):
     price_list = []
     prices      = requests.get(base_url+price_url).json()
 
-    for item in prices:
-        price_list.append(item['close'])
+#    for item in prices:
+    for i in range(0,np.shape(prices)[0], 1):
+        price_list.append(prices[i]['close'])
     
     return np.array(price_list)
 
+
 def fetch_data_stocks(stock_name,years):
     y = str(years) + 'y'
-    data = yf.download(stock_name, period = y)
-    prices = data.loc[:,"Close"]
-    return np.array(prices)
+    data = yf.download(stock_name, period = y,interval="1d")
+    
+    # data = yf.download(stock_name,start="2012-01-01",end="2022-01-01",interval="1mo")
+
+    prices = np.array(data.loc[:,"Close"])
+
+    prices = prices[~np.isnan(prices)]
+
+    return prices
 
 
 
@@ -124,24 +127,18 @@ if __name__ == "__main__":
 
 
     frequency = "86400" #1Day
-    days = 2380 #period
+    days = 2382 #period
        
     for i in range(nr_of_assets):
-        # coins_prices_matrix[i] = fetch_data_crypto(sys.argv[i+1],frequency,days)
+        #coins_prices_matrix[i] = fetch_data_crypto(sys.argv[i+1],frequency,days)
         coins_prices_matrix [i] = fetch_data_stocks(stock_name = sys.argv[i+1],years = 10)
-        # coins_prices_matrix[i] = read_data(sys.argv[i+1])
-        
+        #coins_prices_matrix[i] = read_data(sys.argv[i+1])
         
     return_percentages  = calc_history_retrun(coins_prices_matrix)
 
-
     mean, variance, std_deviation, correlation = calc_mean_variance_stddev(
                                                             return_percentages)
-    # print(calc_mean_variance_stddev(
-    #                                                         return_percentages))
-    
-   # print(correlation)
-    
+        
     portfolio_return       = []
     portfolio_volatilities = []
     weight_array           = []
@@ -157,9 +154,9 @@ if __name__ == "__main__":
         weight_array.append(weights)
         
         temp = calc_porftolio_return(mean,weights)
-        portfolio_return.append(temp)
+        portfolio_return.append(temp*100)
         temp = calc_porftolio_volatility(std_deviation, weights, correlation)
-        portfolio_volatilities.append(temp)
+        portfolio_volatilities.append(temp*100)
     
     sharpe_ratio = (np.array(portfolio_return) - risk_free)/ np.array(portfolio_volatilities)
     max_sharp_value = sharpe_ratio.argmax()
@@ -167,8 +164,7 @@ if __name__ == "__main__":
     max_sharp_volatility = portfolio_volatilities[max_sharp_value]
     max_sharp_return     = portfolio_return[max_sharp_value]
     
-    print("PORTFOLITIO AT 50 50 ")
-    print(calc_porftolio_volatility(std_deviation, [0.5,0.5], correlation))
+
     for i in range(len(max_sharpe_ratio)):
         print(sys.argv[i+1]+ ":" + "%.2f" % round(max_sharpe_ratio[i]*100, 2)  + "%")
   #"%.2f" % round(max_sharpe_ratio[i]*100, 2)
