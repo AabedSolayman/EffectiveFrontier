@@ -24,7 +24,7 @@ python3 EffectiveFrontier <coin_pair1 coin_pair2 coin_pair3 ....>
 ```
 i.e.
 ```bash
-python3 EffectiveFrontier USDT_BTC USDT_ETH USDT_MATIC
+python3 EffectiveFrontier USDT_BTC USDT_ETH
 python3 EffectiveFrontier AMZN TSLA 
 ```
 
@@ -32,13 +32,9 @@ python3 EffectiveFrontier AMZN TSLA
 
 
 ```bash
-USDT_BTC:24.78%
-USDT_ETH:23.02%
-USDT_MATIC:37.61%
-USDT_LINK:14.59%
+USDT_BTC:62.78%
+USDT_ETH:37.22%
 ```
-![alt text](https://github.com/AabedSolayman/EffectiveFrontier/blob/images/Figure_1.png?raw=true)
-
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
