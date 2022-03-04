@@ -1,9 +1,9 @@
 # Effective Frontier
 
-This library is made to help you estimate the perfect investment crypto portfolio depending on historical data. 
+This library is made to help you estimate the perfect investment portfolio depending on historical data. 
 The data is currently fetched from [poloniex](https://poloniex.com/) which has only crypto data.\
 
-It can also work with stocks (under development).
+It can now also work with stocks. 
 
 ## Installation
 
@@ -18,13 +18,14 @@ pip3 install matplotlib
 ```
 
 ## Usage
-The script is called with coin pairs as arguments. These have to be exactly as in [poloniex](https://poloniex.com/).
+The script is called with asset pairs as arguments. If the assets are cryptocurrencies then they have to be exactly as in [poloniex](https://poloniex.com/).
 ```bash
 python3 EffectiveFrontier <coin_pair1 coin_pair2 coin_pair3 ....>
 ```
 i.e.
 ```bash
 python3 EffectiveFrontier USDT_BTC USDT_ETH USDT_MATIC
+python3 EffectiveFrontier AMZN TSLA 
 ```
 
 ## Result
